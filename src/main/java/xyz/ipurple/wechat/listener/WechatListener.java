@@ -69,12 +69,17 @@ public class WechatListener {
                                 continue;
                             }
                         }
+                    } else {
+                        Thread.sleep(2000);
+                        continue;
                     }
                 }
             } catch (UnsupportedEncodingException e) {
                 logger.error("UnsupportedEncodingException", e);
             } catch (NullPointerException e) {
                 logger.error("NullPointerException", e);
+            } catch (InterruptedException e) {
+                logger.error("InterruptedException", e);
             }
         }
     }
@@ -132,7 +137,11 @@ public class WechatListener {
         }
         List<MsgEntity> addMsgList = syncEntity.getAddMsgList();
         if (!addMsgList.isEmpty()) {
-            UserContext.getMsgThreadLocal().put(addMsgList.get(0).getMsgId(), addMsgList.get(0));
+            Iterator<MsgEntity> msgIterator = addMsgList.iterator();
+            while (msgIterator.hasNext()) {
+                MsgEntity next = msgIterator.next();
+                UserContext.getMsgThreadLocal().put(next.getMsgId(), next);
+            }
         }
         return syncEntity;
     }
